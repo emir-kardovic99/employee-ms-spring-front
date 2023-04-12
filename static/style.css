@@ -1,3 +1,11 @@
+#src-name {
+    width: 400px;
+}
+
+#alert-msg {
+    z-index: 2000;
+}
+
 .src-wrapper {
     margin: 20px 0;
 }

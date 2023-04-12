@@ -64,12 +64,19 @@ const displayHoliday = (holidays) => {
     vacationDays = Math.floor(vacationDaysLeft(holidays));
 
     let content = ``;
-    content += `<tr> <th> Days available: </th> <th>` + vacationDays + `</th> </tr>`;
-    content += `<tr> <th>Reason:</th> <th>Days off:</th> </tr>`;
+    content += `<tr> <th> Days available: </th> <th> ${vacationDays} </th> <th></th> </tr>`;
+    content += `<tr> <th>Reason:</th> <th>Days off:</th> <th></th> </tr>`;
 
     holidays.forEach(holiday => {
         let daysOff = dateDiffInDays(holiday.dateFrom, holiday.dateTo);
-        content += `<tr> <td> ` + holiday.reason + ` </td> <td> ` + daysOff + ` </td> </tr>`
+
+        if (holiday.isApproved) {
+            str = `<i class="fa-regular fa-calendar-check" style="color: #198754;"></i>`
+        } else {
+            str = `<i class="fa-regular fa-calendar-xmark" style="color: #DC3545;"></i>`
+        }
+
+        content += `<tr> <td> ${holiday.reason} </td> <td> ${daysOff} </td> <td> ${str} </td> </tr>`
     });
 
     document.getElementById('employee-holiday').innerHTML += content;
