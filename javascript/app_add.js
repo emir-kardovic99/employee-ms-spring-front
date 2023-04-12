@@ -45,13 +45,20 @@ const addEmployee = () => {
         data: JSON.stringify(employeeData),
         contentType: 'application/json',
         headers: {
-            "Authoriation": `Bearer ${jwtToken}`
+            "Authorization": `Bearer ${jwtToken}`
         },
         success: (response) => {
             employeeData["id"] = response;
         },
         error: (error) => {
-            console.log("ERROR!");
+            if (error.status === 400) {
+                document.getElementById("alert-div").innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        Employee with username '${username}' already exists.
+                    </div>`
+            } else {
+                console.log(err);
+            }
         }
     }).then(() => {
         experiences.forEach(experience => {
@@ -63,15 +70,13 @@ const addEmployee = () => {
                 data: JSON.stringify(experience),
                 contentType: 'application/json',
                 headers: {
-                    "Authoriation": `Bearer ${jwtToken}`
+                    "Authorization": `Bearer ${jwtToken}`
                 },
                 success: (response) => {
                     window.location.href = `http://localhost:5500/index.html`;
                 }
             })
         }) 
-    }).catch((err) => {
-        console.log(err);
     });
 }
 
@@ -82,7 +87,7 @@ const addExperience = () => {
         <label >Company name</label>
         <input type="text" class="form-control exp_name" maxlength="255">
     </div>
-    <div class="inp-date inp-wrapper">
+    <div class="inp-date inp-wrapper d-flex justify-content-between">
         <div>
             <label>From:</label>
             <input type="date" class="form-control exp_date_from">

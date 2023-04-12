@@ -13,7 +13,7 @@ $.ajax({
         checkIsAdmin(response.roles);
     },
     error: (err) => {
-        console.log(err);
+        window.location.replace('http://localhost:5500/login.html?err=1');
     }
 });
 
