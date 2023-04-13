@@ -10,10 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
     $.ajax({
         type: "GET",
         url: `http://localhost:8080/api/employees/${id}/info`,
-        success: (response) => {
-            fillFieldsWithData(response);
-            console.log(response);
+        headers: {
+            Authorization: `Bearer ${jwtToken}`
         }
+    })
+    .done((response) => {
+        fillFieldsWithData(response);
+        console.log(response);
+    })
+    .fail((err) => {
+        console.log(err);
     });
 });
 
@@ -36,13 +42,13 @@ const editEmployee = () => {
     }
 
     const employee = {
-        "id": id,
-        "firstName": fName,
-        "lastName": lName,
-        "jobTitle": jobTitle,
-        "startDate": startDate,
-        "username": username,
-        "password": password
+        id: id,
+        firstName: fName,
+        lastName: lName,
+        jobTitle: jobTitle,
+        startDate: startDate,
+        username: username,
+        password: password
     }
 
     let experiences = [];
@@ -52,11 +58,11 @@ const editEmployee = () => {
             return;
         } else {
             experiences.push({
-                "id": expId[i].value,
-                "name": expName[i].value,
-                "dateFrom": expDateFrom[i].value,
-                "dateTo": expDateTo[i].value,
-                "employeeId": id
+                id: expId[i].value,
+                name: expName[i].value,
+                dateFrom: expDateFrom[i].value,
+                dateTo: expDateTo[i].value,
+                employeeId: id
             });
         }
     }
@@ -70,13 +76,10 @@ const editEmployee = () => {
         contentType: "application/json",
         headers:{
             'Authorization' : `Bearer ${jwtToken}`
-        },
-        success: (response) => {
         }
-    }).then(() => {
-        let i = 0;
+    })
+    .done((response) => {
         experiences.forEach(experience => { 
-            console.log(experience);
             $.ajax({
                 url: `http://localhost:8080/api/employees/experiences`,
                 type: "PUT",
@@ -84,16 +87,21 @@ const editEmployee = () => {
                 contentType: "application/json",
                 headers:{
                     'Authorization' : `Bearer ${jwtToken}`
-                },
-                success: (response) => {
                 }
             });
-            i += 1;
         });
-    }).catch((err) => {
-        console.log(err);
-    });
-    location.reload();  
+    })
+    .done(() => {
+        location.reload(); 
+    })
+    .fail((err) => {
+        if (err.status === 400) {
+            document.getElementById("alert-div").innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Employee with username '${username}' already exists.
+                </div>`
+        }
+    }); 
 }
 
 const dateDiffInDays = (dateFrom, dateTo) => {
@@ -121,17 +129,17 @@ const fillFieldsWithData = (response) => {
         <hr>
         <div class="inp-wrapper">
             <label for="exp_name">Company name</label>
-            <input type="text" class="form-control exp_name" id="exp_name" maxlength="20" value='` + experience.name +`'>
-            <input type="hidden" class="exp_id" value='`+ experience.id +`'>
+            <input type="text" class="form-control exp_name" id="exp_name" maxlength="20" value='${experience.name}'>
+            <input type="hidden" class="exp_id" value='${experience.id}'>
         </div>
         <div class="inp-date inp-wrapper">
             <div>
                 <label for="exp_date_from">From:</label>
-                <input type="date" class="form-control exp_date_from" id="exp_date_from" value='` + experience.dateFrom +`'>
+                <input type="date" class="form-control exp_date_from" id="exp_date_from" value='${experience.dateFrom}'>
             </div>
             <div>
                 <label for="exp_date_to">To:</label>
-                <input type="date" class="form-control exp_date_to" id="exp_date_to" value='` + experience.dateTo + `'>
+                <input type="date" class="form-control exp_date_to" id="exp_date_to" value='${experience.dateTo}'>
             </div>
         </div>`;
         
