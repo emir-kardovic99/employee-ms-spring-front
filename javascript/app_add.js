@@ -21,23 +21,20 @@ const addEmployee = () => {
             return;
         }
         experiences.push({
-            "name": expName[i].value,
-            "dateFrom": expDateFrom[i].value,
-            "dateTo": expDateTo[i].value
+            name: expName[i].value,
+            dateFrom: expDateFrom[i].value,
+            dateTo: expDateTo[i].value
         })
     }
 
     let employeeData = {
-        "firstName": fName,
-        "lastName": lName,
-        "jobTitle": jobTitle,
-        "startDate": startDate,
-        "username": username,
-        "password": password
+        firstName: fName,
+        lastName: lName,
+        jobTitle: jobTitle,
+        startDate: startDate,
+        username: username,
+        password: password
     }
-
-    console.log(employeeData);
-    console.log(experiences);
 
     $.ajax({
         url: `http://localhost:8080/api/employees`,
@@ -45,39 +42,38 @@ const addEmployee = () => {
         data: JSON.stringify(employeeData),
         contentType: 'application/json',
         headers: {
-            "Authorization": `Bearer ${jwtToken}`
-        },
-        success: (response) => {
-            employeeData["id"] = response;
-        },
-        error: (error) => {
-            if (error.status === 400) {
-                document.getElementById("alert-div").innerHTML = `
-                    <div class="alert alert-danger" role="alert">
-                        Employee with username '${username}' already exists.
-                    </div>`
-            } else {
-                console.log(err);
-            }
+            Authorization: `Bearer ${jwtToken}`
         }
-    }).then(() => {
+    })
+    .done((response) => {
+        employeeData["id"] = response;
+
         experiences.forEach(experience => {
             experience["employeeId"] = employeeData["id"];
-            console.log(experience);
             $.ajax({
                 url: `http://localhost:8080/api/employees/experiences`,
                 type: 'POST',
                 data: JSON.stringify(experience),
                 contentType: 'application/json',
                 headers: {
-                    "Authorization": `Bearer ${jwtToken}`
+                    Authorization: `Bearer ${jwtToken}`
                 },
                 success: (response) => {
                     window.location.href = `http://localhost:5500/index.html`;
                 }
             })
         }) 
-    });
+    })
+    .fail((err) => {
+        if (err.status === 400) {
+            document.getElementById("alert-div").innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Employee with username '${username}' already exists.
+                </div>`
+        } else {
+            console.log(err);
+        }
+    })
 }
 
 const addExperience = () => {

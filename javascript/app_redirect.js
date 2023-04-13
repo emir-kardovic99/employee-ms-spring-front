@@ -2,20 +2,23 @@ const username = localStorage.getItem("username");
 const jwtToken = localStorage.getItem("jwtToken");
 const refreshToken = localStorage.getItem("refreshToken");
 
-$.ajax({
-    type: "GET",
+let settings = {
     url: `http://localhost:8080/api/employees/${username}`,
-    dataType: 'json',
-    headers:{
-        'Authorization' : `Bearer ${jwtToken}`
+    method: "GET",
+    headers: {
+        Authorization : `Bearer ${jwtToken}`
     },
-    success: (response) => {
+};
+
+$.ajax(settings)
+    .done((response) => {
         checkIsAdmin(response.roles);
-    },
-    error: (err) => {
-        window.location.replace('http://localhost:5500/login.html?err=1');
-    }
-});
+    })
+    .fail((err) => {
+        if (err.status === 401) {
+            window.location.replace("http://localhost:5500/login.html?err=1");
+        }
+    });
 
 const checkIsAdmin = (roles) => {
     let isAdmin = false;
@@ -26,8 +29,8 @@ const checkIsAdmin = (roles) => {
     });
 
     if (isAdmin) {
-        window.location.href = "http://localhost:5500/index.html";
+        window.location.replace("http://localhost:5500/index.html");
     } else {
-        window.location.href = "http://localhost:5500/info.html";
+        window.location.replace("http://localhost:5500/info.html");
     }
 }

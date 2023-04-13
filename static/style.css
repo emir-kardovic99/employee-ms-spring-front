@@ -6,6 +6,10 @@
     z-index: 2000;
 }
 
+#btn-clear {
+    border-radius: 30px;
+}
+
 .src-wrapper {
     margin: 20px 0;
 }

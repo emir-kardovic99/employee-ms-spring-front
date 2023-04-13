@@ -5,6 +5,7 @@ const username = localStorage.getItem('username');
 const url = new URL(window.location.href);
 const srcParams = url.searchParams;
 const id = srcParams.get('id');
+
 let isAdmin = false;
 let employee;
 let vacationDays;
@@ -15,35 +16,32 @@ let total = 0;
 $.ajax({
     type: "GET",
     url: `http://localhost:8080/api/employees/${id}/info`,
-    dataType: 'json',
     headers:{
-        'Authorization' : `Bearer ${jwtToken}`
-    },
-    success: (response) => {
-        console.log(response);
-        employee = response;
-        console.log(response);
-        displayExperience(response.pastExperiences);
-        displayEmployee(response);
-        displayHoliday(response.holidays);
-    },
-    error: (err) => {
-        console.log(err);
+        Authorization : `Bearer ${jwtToken}`
     }
 })
-
+.done((response) => {
+    employee = response;
+    console.log(response);
+    displayExperience(response.pastExperiences);
+    displayEmployee(response);
+    displayHoliday(response.holidays);
+})
+.fail((err) => {
+    console.log(err);
+});
 
 const displayEmployee = (employee) => {
     let content = ``;
     const yearsInCompany = diffBetweenTwoDatesInYears(new Date(employee.startDate), new Date());
     total = yearsInCompany + totalExp; 
 
-    content += `<tr> <td> First Name: </td> <td> ` + employee.firstName + ` </td> </tr>`;
-    content += `<tr> <td> Last Name: </td> <td> ` + employee.lastName + ` </td> </tr>`;
-    content += `<tr> <td> Job Title: </td> <td>` + employee.jobTitle + `</td> </tr>`;
-    content += `<tr> <td> Starting Date: </td> <td>` + employee.startDate + `</td> </tr>`;
-    content += `<tr> <td> Years in Company: </td> <td>` + yearsInCompany + `</td> </tr>`;
-    content += `<tr> <th> Total experience: </th> <th>` + total + `</th> </tr>`;
+    content += `<tr> <td> First Name: </td> <td> ${employee.firstName} </td> </tr>`;
+    content += `<tr> <td> Last Name: </td> <td> ${employee.lastName} </td> </tr>`;
+    content += `<tr> <td> Job Title: </td> <td> ${employee.jobTitle} </td> </tr>`;
+    content += `<tr> <td> Starting Date: </td> <td> ${employee.startDate} </td> </tr>`;
+    content += `<tr> <td> Years in Company: </td> <td> ${yearsInCompany} </td> </tr>`;
+    content += `<tr> <th> Total experience: </th> <th> ${total} </th> </tr>`;
 
     document.getElementById('employee-info').innerHTML = content;
 } 
@@ -102,7 +100,8 @@ const addHoliday = () => {
         "reason": reason,
         "dateFrom": dateFrom,
         "dateTo": dateTo,
-        "employeeId": id
+        "employeeId": id,
+        "isApproved": false
     }
 
     $.ajax({
@@ -111,14 +110,14 @@ const addHoliday = () => {
         data: JSON.stringify(newHoliday),
         contentType: "application/json",
         headers:{
-            'Authorization' : `Bearer ${jwtToken}`
-        },
-        success: (response) => {
-            location.reload();
-        },
-        error: (err) => {
-            console.log(err);
+            Authorization : `Bearer ${jwtToken}`
         }
+    })
+    .done((response) => {
+        location.reload();
+    })
+    .fail((err) => {
+        console.log(err);
     });
 }
 
