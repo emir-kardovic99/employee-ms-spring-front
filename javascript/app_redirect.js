@@ -12,7 +12,7 @@ let settings = {
 
 $.ajax(settings)
     .done((response) => {
-        checkIsAdmin(response.roles);
+        checkIsAdmin(response);
     })
     .fail((err) => {
         if (err.status === 401) {
@@ -20,8 +20,9 @@ $.ajax(settings)
         }
     });
 
-const checkIsAdmin = (roles) => {
+const checkIsAdmin = (response) => {
     let isAdmin = false;
+    const roles = response.roles;
     roles.forEach(role => {
         if (role.name === "ROLE_ADMIN") {
             isAdmin = true;
@@ -29,8 +30,8 @@ const checkIsAdmin = (roles) => {
     });
 
     if (isAdmin) {
-        window.location.replace("http://localhost:5500/index.html");
+        window.location.replace(`http://localhost:5500/index.html?id=${response.id}`);
     } else {
-        window.location.replace("http://localhost:5500/info.html");
+        window.location.replace(`http://localhost:5500/info.html?id=${response.id}`);
     }
 }

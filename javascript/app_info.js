@@ -15,7 +15,7 @@ let total = 0;
 
 $.ajax({
     type: "GET",
-    url: `http://localhost:8080/api/employees/${id}/info`,
+    url: `http://localhost:8080/api/employees/${username}`,
     headers:{
         Authorization : `Bearer ${jwtToken}`
     }
@@ -94,7 +94,7 @@ const addHoliday = () => {
         alert("Dates must be in order!");
         return;
     }
-    
+
     if ((vacationDays - daysOff) < 0) {
         alert("You can't go on vacation, no free days!");
         return;
