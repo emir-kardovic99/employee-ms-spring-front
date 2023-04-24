@@ -10,6 +10,14 @@
     border-radius: 30px;
 }
 
+#inbox {
+    color: #0E6EFD;
+}
+
+#inbox:hover {
+    cursor: pointer;
+}
+
 .src-wrapper {
     margin: 20px 0;
 }

@@ -12,13 +12,13 @@
 <body>
     <nav class="navbar navbar-light bg-light">
         <div class="container">
-          <a class="navbar-brand">Employee Management System</a>
+          <a class="navbar-brand" href="#">Employee Management System</a>
           <i class="fa-solid fa-inbox fa-2x" id="inbox" data-bs-toggle="modal" data-bs-target="#vacationModal"></i>
           <div class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search by name" id="src-name">
             <button onclick="clearFilter()" class="btn btn-outline-danger me-2"><i class="fa-solid fa-x"></i></button>
             <button onclick="findByName()" class="btn btn-outline-primary me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
-            <a href="http://localhost:5500/add.html" class="btn btn-outline-success" ><i class="fa-regular fa-plus"></i></a>
+            <a href="http://localhost:5500/add.html" class="btn btn-outline-success" > <i class="fa-solid fa-user-plus"></i> </a>
           </div>
         </div>
     </nav>
@@ -54,39 +54,46 @@
       </div>
 
     <div class="container mt-5">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Job Title</th>
-                    <th>Start Date</th>
-                    <th>Years in Company</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="main-table">
+      <div class="alert alert-success position-absolute top-25 start-50 translate-middle" id="add-succ" role="alert">
+        Employee added successfully!
+      </div>
+      <div class="alert alert-success position-absolute top-25 start-50 translate-middle" id="edit-succ" role="alert">
+        Employee edited succesfully!
+      </div>
 
-            </tbody>
-        </table>
+      <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>#</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Job Title</th>
+                  <th>Start Date</th>
+                  <th>Years in Company</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody id="main-table">
 
-        <nav class="d-flex justify-content-center">
-          <ul class="pagination">
-            <li class="page-item" id="previous" onclick="previousPage()">
-              <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li class="page-item" id="next" onclick="nextPage()">
-              <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
+          </tbody>
+      </table>
+
+      <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+          <li class="page-item" id="previous" onclick="previousPage()">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" id="next" onclick="nextPage()">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>

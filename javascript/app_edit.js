@@ -1,10 +1,14 @@
 const url = new URL(window.location.href);
 const srcParams = url.searchParams;
 const id = srcParams.get('id');
+let numOfExp = 0;
 
 const jwtToken = localStorage.getItem('jwtToken');
 const refreshToken = localStorage.getItem('refreshToken');
 const username = localStorage.getItem('username');
+
+const endDate = document.getElementById('end_date');
+endDate.classList.add("d-none");
 
 document.addEventListener("DOMContentLoaded", () => {
     $.ajax({
@@ -16,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .done((response) => {
         fillFieldsWithData(response);
-        console.log(response);
     })
     .fail((err) => {
         console.log(err);
@@ -28,17 +31,11 @@ const editEmployee = () => {
     let lName = document.getElementById("last_name").value;
     let jobTitle = document.getElementById("job_title").value;
     let startDate = document.getElementById("start_date").value;
+    let endDate = document.getElementById("end_date").value;
     let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
 
-    let expId = document.getElementsByClassName("exp_id");
-    let expName = document.getElementsByClassName("exp_name");
-    let expDateFrom = document.getElementsByClassName("exp_date_from");
-    let expDateTo = document.getElementsByClassName("exp_date_to");
-
-    if (password === "") {
-        alert("Password field can't be empty");
-        return;
+    if (endDate === '') {
+        endDate = null;
     }
 
     const employee = {
@@ -47,27 +44,9 @@ const editEmployee = () => {
         lastName: lName,
         jobTitle: jobTitle,
         startDate: startDate,
-        username: username,
-        password: password
+        endDate: endDate,
+        username: username
     }
-
-    let experiences = [];
-    for (let i=0; i < expName.length; i++) {
-        if (dateDiffInDays(expDateFrom[i].value, expDateTo[i].value) < 0) {
-            alert("Dates must be in order!");
-            return;
-        } else {
-            experiences.push({
-                id: expId[i].value,
-                name: expName[i].value,
-                dateFrom: expDateFrom[i].value,
-                dateTo: expDateTo[i].value,
-                employeeId: id
-            });
-        }
-    }
-
-    
 
     $.ajax({
         type: "PUT",
@@ -78,21 +57,8 @@ const editEmployee = () => {
             'Authorization' : `Bearer ${jwtToken}`
         }
     })
-    .done((response) => {
-        experiences.forEach(experience => { 
-            $.ajax({
-                url: `http://localhost:8080/api/employees/experiences`,
-                type: "PUT",
-                data: JSON.stringify(experience),
-                contentType: "application/json",
-                headers:{
-                    'Authorization' : `Bearer ${jwtToken}`
-                }
-            });
-        });
-    })
     .done(() => {
-        location.reload(); 
+        location.replace("http://localhost:5500/index.html?msg=edit-success"); 
     })
     .fail((err) => {
         if (err.status === 400) {
@@ -121,28 +87,23 @@ const fillFieldsWithData = (response) => {
     document.getElementById('job_title').value = response.jobTitle;
     document.getElementById('start_date').value = response.startDate;
     document.getElementById('username').value = response.username;
+    
+    console.log(response);
+    if (response.endDate !== null) {
+        const checkBox = document.getElementById('cb_ex_employee');
+        endDate.classList.remove("d-none");
+        checkBox.disabled = true;
 
-    const experiences = response.pastExperiences;
-    let content = ``;
-    experiences.forEach(experience => {
-        content += `
-        <hr>
-        <div class="inp-wrapper">
-            <label for="exp_name">Company name</label>
-            <input type="text" class="form-control exp_name" id="exp_name" maxlength="20" value='${experience.name}'>
-            <input type="hidden" class="exp_id" value='${experience.id}'>
-        </div>
-        <div class="inp-date inp-wrapper">
-            <div>
-                <label for="exp_date_from">From:</label>
-                <input type="date" class="form-control exp_date_from" id="exp_date_from" value='${experience.dateFrom}'>
-            </div>
-            <div>
-                <label for="exp_date_to">To:</label>
-                <input type="date" class="form-control exp_date_to" id="exp_date_to" value='${experience.dateTo}'>
-            </div>
-        </div>`;
-        
-    });
-    document.getElementById('experiences-div').innerHTML = content;
+        document.getElementById('end_date').value = response.endDate;
+    }
+}
+
+const isExEmployee = () => {
+    const checkBox = document.getElementById('cb_ex_employee');
+
+    if (checkBox.checked === true) {
+        endDate.classList.remove("d-none");
+    } else {
+        endDate.classList.add("d-none");
+    }
 }

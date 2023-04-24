@@ -36,12 +36,15 @@ const displayEmployee = (employee) => {
     const yearsInCompany = diffBetweenTwoDatesInYears(new Date(employee.startDate), new Date());
     total = yearsInCompany + totalExp; 
 
+    let employeeStartDate = new Date(employee.startDate).toLocaleString("en-GB", {year: 'numeric', month: 'long', day: 'numeric'});
+
     content += `<tr> <td> First Name: </td> <td> ${employee.firstName} </td> </tr>`;
     content += `<tr> <td> Last Name: </td> <td> ${employee.lastName} </td> </tr>`;
+    content += `<tr> <td> Username: </td> <td> ${employee.username} </td> </tr>`;
     content += `<tr> <td> Job Title: </td> <td> ${employee.jobTitle} </td> </tr>`;
-    content += `<tr> <td> Starting Date: </td> <td> ${employee.startDate} </td> </tr>`;
-    content += `<tr> <td> Years in Company: </td> <td> ${yearsInCompany} </td> </tr>`;
-    content += `<tr> <th> Total experience: </th> <th> ${total} </th> </tr>`;
+    content += `<tr> <td> Starting Date: </td> <td> ${employeeStartDate} </td> </tr>`;
+    content += `<tr> <td> Years in Company: </td> <td> ${yearsInCompany} years </td> </tr>`;
+    content += `<tr class='table-primary'> <th> Total experience: </th> <th> ${total} years </th> </tr>`;
 
     document.getElementById('employee-info').innerHTML = content;
 } 
@@ -50,11 +53,11 @@ const displayExperience = (experiences) => {
     let content = ``;
     experiences.forEach(experience => {
         let yearsWorked = diffBetweenTwoDatesInYears(new Date(experience.dateFrom), new Date(experience.dateTo));
-        content += `<tr> <td>` + experience.name + `</td> <td>` + yearsWorked + `</td> </tr>`;
+        content += `<tr> <td>` + experience.name + `</td> <td>` + yearsWorked + ` years </td> </tr>`;
         totalExp += yearsWorked;
     });
 
-    content += `<tr> <th> Total: </th> <th>` + totalExp + `</th> </tr>`;
+    content += `<tr class='table-info'> <th> Total: </th> <th>` + totalExp + ` years</th> </tr>`;
     document.getElementById('employee-experience').innerHTML += content;
 }
 
@@ -62,7 +65,7 @@ const displayHoliday = (holidays) => {
     vacationDays = Math.floor(vacationDaysLeft(holidays));
 
     let content = ``;
-    content += `<tr> <th> Days available: </th> <th> ${vacationDays} </th> <th></th> </tr>`;
+    content += `<tr class='table-info'> <th> Days available: </th> <th> ${vacationDays} </th> <th></th> </tr>`;
     content += `<tr> <th>Reason:</th> <th>Days off:</th> <th></th> </tr>`;
 
     holidays.forEach(holiday => {
@@ -87,7 +90,12 @@ const addHoliday = () => {
 
     let daysOff = dateDiffInDays(dateFrom, dateTo);
 
-    if ( daysOff < 0 || ((vacationDays - daysOff) < 0)) {
+    if (daysOff < 0) {
+        alert("Dates must be in order!");
+        return;
+    }
+    
+    if ((vacationDays - daysOff) < 0) {
         alert("You can't go on vacation, no free days!");
         return;
     }

@@ -2,6 +2,8 @@ const jwtToken = localStorage.getItem('jwtToken');
 const refreshToken = localStorage.getItem('refreshToken');
 const username = localStorage.getItem('username');
 
+let numOfExp = 0;
+
 const addEmployee = () => {
     let fName = document.getElementById("first_name").value;
     let lName = document.getElementById("last_name").value;
@@ -57,12 +59,12 @@ const addEmployee = () => {
                 contentType: 'application/json',
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
-                },
-                success: (response) => {
-                    window.location.href = `http://localhost:5500/index.html`;
                 }
             })
         }) 
+    })
+    .done(() => {
+        window.location.replace("http://localhost:5500/index.html?msg=add-success");
     })
     .fail((err) => {
         if (err.status === 400) {
@@ -73,28 +75,39 @@ const addEmployee = () => {
         } else {
             console.log(err);
         }
-    })
+    });
+
+    
 }
 
 const addExperience = () => {
     content = `
-    <hr>
-    <div class="inp-wrapper">
-        <label >Company name</label>
-        <input type="text" class="form-control exp_name" maxlength="255">
-    </div>
-    <div class="inp-date inp-wrapper d-flex justify-content-between">
-        <div>
-            <label>From:</label>
-            <input type="date" class="form-control exp_date_from">
+    <div id='exp-${numOfExp}'>
+        <hr>
+        <div class="inp-wrapper">
+            <label >Company name</label>
+            <input type="text" class="form-control exp_name" maxlength="255">
         </div>
-        <div>
-            <label>To:</label>
-            <input type="date" class="form-control exp_date_to">
+        <div class="inp-date inp-wrapper d-flex justify-content-between">
+            <div>
+                <label>From:</label>
+                <input type="date" class="form-control exp_date_from">
+            </div>
+            <div>
+                <label>To:</label>
+                <input type="date" class="form-control exp_date_to">
+            </div>
+            <button class='btn btn-danger mt-4' onclick='deleteExperience(${numOfExp})'> <i class="fa-solid fa-trash"></i> </button>
         </div>
     </div>`;
 
-    document.getElementById('experiences-div').innerHTML += content;
+    numOfExp++;
+    const expDiv = document.getElementById('experiences-div');
+    expDiv.insertAdjacentHTML("beforeend", content);
+}
+
+const deleteExperience = (experienceIndex) => {
+    document.getElementById(`exp-${experienceIndex}`).remove();
 }
 
 const dateDiffInDays = (dateFrom, dateTo) => {

@@ -12,10 +12,16 @@ let holidays;
 const alertMsg = document.getElementById("alert-msg");
 const inbox = document.getElementById("inbox");
 const table = document.getElementById("holiday-body");
+const addSucc = document.getElementById("add-succ");
+const editSucc = document.getElementById("edit-succ");
 
 alertMsg.classList.add("d-none");
+addSucc.classList.add("d-none");
+editSucc.classList.add("d-none");
+
 
 document.addEventListener("DOMContentLoaded", () => {
+    checkMessages();
     listEmployees();
     getUnapprovedHolidays();
 });
@@ -55,6 +61,7 @@ const findByName = () => {
         isFirst = response.first;
         isLast = response.last;
 
+        checkIfFirstOrLastPage();
         addContentInTable(response.content);
     })
     .fail((err) => {
@@ -66,7 +73,6 @@ const addContentInTable = (response) => {
     employees = response;
 
     let content = ``;
-    if (employees.length === 0) return;
 
     response.forEach(element => {
         let yearsInCompany = diffBetweenTwoDatesInYears(new Date(element.startDate), new Date());
@@ -78,9 +84,9 @@ const addContentInTable = (response) => {
                         <td> ${element.jobTitle} </td> 
                         <td> ${element.startDate} </td> 
                         <td> ${yearsInCompany} </td>
-                        <td> <a class='btn btn-primary' href='http://localhost:5500/info.html?id=${element.id}'>Info</a> </td>
-                        <td> <a class='btn btn-primary' href='http://localhost:5500/edit.html?id=${element.id}'>Edit</a> </td>
-                        <td> <a class='btn btn-danger' onclick='deleteEmployee(${element.id })'>Delete</a></td>
+                        <td> <a class='btn btn-primary' href='http://localhost:5500/info.html?id=${element.id}'> <i class="fa-solid fa-circle-info"></i> </a> </td>
+                        <td> <a class='btn btn-primary' href='http://localhost:5500/edit.html?id=${element.id}'> <i class="fa-solid fa-user-pen"></i> </a> </td>
+                        <td> <a class='btn btn-danger' onclick='deleteEmployee(${element.id })'> <i class="fa-solid fa-user-xmark"></i> </a></td>
                     </tr>`;
     });
 
@@ -126,7 +132,7 @@ const getUnapprovedHolidays = () => {
 
 const checkInbox = (response) => {
     if (response.length > 0) {
-        inbox.classList.add("class", "fa-bounce");
+        inbox.classList.add("fa-bounce");
         holidays = response;
         let content = ``;
         
@@ -176,7 +182,7 @@ const approveHoliday = (id) => {
             Authorization: `Bearer ${jwtToken}`
         }
     })
-    .done((response) => {
+    .done(() => {
         const table = document.getElementById("holiday-body").innerHTML = "";
         getUnapprovedHolidays();
 
@@ -196,8 +202,7 @@ const dissaproveHoliday = (id) => {
             Authorization: `Bearer ${jwtToken}`
         }
     })
-    .done((response) => {
-        // const table = document.getElementById("holiday-body").innerHTML = "";
+    .done(() => {
         table.innerHTML = "";
         getUnapprovedHolidays();
     })
@@ -243,9 +248,30 @@ const checkIfFirstOrLastPage = () => {
 
 const clearFilter = () => {
     page = 0;
+    document.getElementById("src-name").value = "";
     listEmployees();
 }
 
 const diffBetweenTwoDatesInYears = (dateFrom, dateTo) => {
     return new Date(dateTo - dateFrom).getFullYear() - 1970;
+}
+
+const checkMessages = () => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    const msg = urlParams.get("msg");
+
+    if (msg === "add-success") {
+        addSucc.classList.remove("d-none");
+        setTimeout(() => {
+            addSucc.classList.add("d-none");
+        }, 2000);
+    }
+    if (msg === "edit-success") {
+        editSucc.classList.remove("d-none");
+        setTimeout(() => {
+            editSucc.classList.add("d-none");
+        }, 2000);
+    }
 }
