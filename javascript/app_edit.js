@@ -7,7 +7,7 @@ const jwtToken = localStorage.getItem('jwtToken');
 const refreshToken = localStorage.getItem('refreshToken');
 const username = localStorage.getItem('username');
 
-const endDate = document.getElementById('end_date');
+const endDate = document.getElementById('end_date_div');
 endDate.classList.add("d-none");
 
 document.addEventListener("DOMContentLoaded", () => {
